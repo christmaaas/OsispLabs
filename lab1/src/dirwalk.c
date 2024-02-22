@@ -58,7 +58,7 @@ void get_flags(const int argc, const char* argv[], active_flags* flags)
     }
 }
 
-bool comparator(const struct dirent** a, const struct dirent** b) // если не заработает возвращать инт а не булв
+bool comparator(const struct dirent** a, const struct dirent** b) 
 {
     return strcoll((*a)->d_name, (*b)->d_name);
 }
