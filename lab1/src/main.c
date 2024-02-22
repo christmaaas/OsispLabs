@@ -1,6 +1,16 @@
+#include "dirwalk.h"
+
 #include <stdio.h>
 
-int main()
+int main(int argc, char *argv[])
 {
-    printf("Hello, world!\n");
+    active_flags flags;
+
+    const char* path = get_path(argc, argv);
+
+    get_flags(argc, argv, &flags);
+
+    dirwalk(path, flags);
+
+    return 0;
 }
