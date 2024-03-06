@@ -8,7 +8,13 @@
 #define __USE_MISC 
 #include <dirent.h>
 
-const char* get_path(const int argc, const char* argv[])
+extern int scandir(const char *dirp, struct dirent ***namelist,
+            int (*filter)(const struct dirent *),
+            int (*compar)(const struct dirent **, const struct dirent **));
+
+extern int alphasort();
+
+const char* get_path(const int argc, const char** argv)
 {
     for(int i = 1; i < argc; i++)
     {
@@ -19,10 +25,10 @@ const char* get_path(const int argc, const char* argv[])
     return ".";
 }
 
-void get_flags(const int argc, const char* argv[], active_flags* flags)
+void get_flags(const int argc, const char** argv, flag_t* flags)
 {
     char flag;
-    while ((flag = getopt(argc, argv, "ldfs")) != -1)
+    while ((flag = getopt(argc, (char**)argv, "ldfs")) != -1)
     {
         switch(flag)
         {
@@ -58,12 +64,7 @@ void get_flags(const int argc, const char* argv[], active_flags* flags)
     }
 }
 
-bool comparator(const struct dirent** a, const struct dirent** b) 
-{
-    return strcoll((*a)->d_name, (*b)->d_name);
-}
-
-void dirwalk(const char* path, const active_flags flags)
+void dirwalk(const char* path, const flag_t flags)
 {
     struct dirent** directories_list;
 
@@ -72,13 +73,13 @@ void dirwalk(const char* path, const active_flags flags)
     char next_directory_path[MAX_PATH_LEN];
 
     if(flags._s)
-        count_of_files = scandir(path, &directories_list, NULL, comparator); 
+        count_of_files = scandir(path, &directories_list, NULL, alphasort); 
     else
         count_of_files = scandir(path, &directories_list, NULL, NULL);
 
     if(count_of_files == -1)
     {
-        perror("scnadir");
+        perror("scandir");
         return;
     }
 
@@ -109,7 +110,7 @@ void dirwalk(const char* path, const active_flags flags)
                 {
                     printf("%s/%s\n", path, directories_list[i]->d_name);
 
-                    sprintf(next_directory_path, "%s/%s", path, directories_list[i]->d_name);
+                    snprintf(next_directory_path, MAX_PATH_LEN, "%s/%s", path, directories_list[i]->d_name);
 
                     dirwalk(next_directory_path, flags);
                 }

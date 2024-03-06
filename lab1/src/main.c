@@ -1,8 +1,8 @@
 #include "dirwalk.h"
 
-int main(int argc, char *argv[])
+int main(int argc, const char **argv)
 {
-    active_flags flags;
+    flag_t flags;
 
     get_flags(argc, argv, &flags);
 
